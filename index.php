@@ -17,6 +17,9 @@
                     <h1>Тикет-система</h1>
                 </div>
             </div>
+            <?php 
+                include_once "./controller/login_show.php";
+            ?>
         </div>
     
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
