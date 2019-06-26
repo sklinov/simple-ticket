@@ -8,8 +8,8 @@ class LoginView {
     public function showLogin() {
         echo '
         <div class="text-center">
-            <form class="form-signin">
-                <img class="mb-4" src="./img/service.png" alt="" width="72" height="72">
+            <form class="form-signin" style="max-width: 400px; margin: auto;">
+                <img class="mb-4" src="./img/service.png" alt="Customer Support">
                 <h1 class="h3 mb-3 font-weight-normal">Вход</h1>
                 <label for="login-username" class="sr-only">Имя пользователя</label>
                 <input type="username" id="login-username" class="form-control mt-3" placeholder="Имя пользователя" required autofocus>

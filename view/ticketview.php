@@ -5,21 +5,65 @@ class TicketView {
     public  $current_page;
     
     private $tickets = [];
+    public  $types = [
+        ["type_id"=> 1, "type_name"=>"Тип 1"],
+        ["type_id"=> 2, "type_name"=>"Тип 2"],
+        ["type_id"=> 3, "type_name"=>"Тип 3"]
+    ];
 
     private $number_of_pages;
     private $number_of_tickets_on_page = 4;
     
     
 
-    public function showTickets($tickets) {
-        
+    public function showTickets($tickets) {        
         $this->tickets = $tickets;
-
         $this->showControls();      
         $this->ticketsToShow();
         $this->showPagination();
     }
     
+    public function newTicket() {
+        echo '
+            <nav class="navbar">
+                <h2 class="navbar-brand">Новый тикет</h2>
+            </nav>
+            <hr>
+        <form enctype="multipart/form-data" method="POST">
+            <input type="hidden" id="user-id-field" value="'.$_SESSION['user_id'].'"></input>
+            <div class="form-group">
+                <label for="type-field">Тип проблемы *</label>
+                <select class="form-control" id="type-field" required>';
+                    foreach($this->types as $type) {
+                        echo '<option value="'.$type['type_id'].'">'.$type['type_name'].'</option>';
+                    }
+           echo '</select>
+            </div>
+            <div class="form-group">
+                <label for="topic-field">Краткое описание (тема) *</label>
+                <input type="text" id="topic-field" class="form-control" required></input>
+            </div>
+            <div class="form-group">
+                <label for="text-field">Подробное описание *</label>
+                <textarea id="text-field" class="form-control" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="link-field">Ссылка на сайт, страницу, и т.д.</label>
+                <input type="text" id="link-field" class="form-control"></input>
+            </div>
+            <div class="form-group">
+            <input type="file" name="file" id="file-field"></input>
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-primary" id="new-ticket-submit-btn">Отправить</button>
+                <button type="reset" class="btn btn-secondary" id="new-ticket-cancel-btn">Отмена</button>
+            </div>
+        </form>    
+        
+        ';
+        
+    }
+
     private function ticketsToShow() {
         echo '<table class="table">
                 <thead>
