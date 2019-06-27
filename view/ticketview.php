@@ -11,10 +11,118 @@ class TicketView {
         ["type_id"=> 3, "type_name"=>"Тип 3"]
     ];
 
+    public $statuses = [];
+
     private $number_of_pages;
     private $number_of_tickets_on_page = 4;
     
-    
+    public function showFullTicket($ticket) {
+        //echo $ticket->ticket_id;
+        $this->showHeader($ticket);
+        $this->showMessages($ticket);
+        $this->showReply($ticket);
+    }
+
+    private function showHeader($ticket) {
+        echo '
+            <nav class="navbar">
+                <h2 class="navbar-brand">Просмотр тикета #'.$ticket->ticket_id.'</h2>';
+        if($this->role_id == 2) {
+        echo '<form>
+                <div class="form-row">
+                    <div class="form-group mr-3">
+                        <label for="status-field">Изменить статус</label>
+                        <select class="form-control" id="message-status-field">';
+                            foreach($ticket->statuses as $status) {
+                                if($ticket->status_id == $status['status_id']) {
+                                    $selected = "selected";
+                                }
+                                else {
+                                    $selected = "";
+                                }
+                                echo '<option value="'.$status['status_id'].'" '.$selected.'>'.$status['status_name'].'</option>';
+                            }
+                echo '</select>
+                    </div>
+                    <div class="form-group">
+                        <label for="type-field">Изменить тип</label>
+                        <select class="form-control" id="message-type-field">';
+                            foreach($ticket->types as $type) {
+                                if($ticket->type_id == $type['type_id']) {
+                                    $selected = "selected";
+                                }
+                                else {
+                                    $selected = "";
+                                }
+                                echo '<option value="'.$type['type_id'].'" '.$selected.'>'.$type['type_name'].'</option>';
+                            }
+                    echo '</select>
+                    </div>
+                </div>
+              </form>  
+        ';
+        }
+        echo '</nav>
+        <div class="bg-light p-3 border-top border-bottom border-dark">
+            Статус: '.$ticket->status_name.', создан '.$ticket->timestamp_created.', тема: '.$ticket->topic.'
+        </div>
+        ';  
+    }
+
+    private function showMessages($ticket) {
+        echo '<table class="table"><tbody>';
+        foreach($ticket->messages as $message) {
+            if($message['role_id'] == 1) {
+                $avatar = "./img/user.png";
+                $heading = "Ваше сообщение";
+            }
+            else if ($message['role_id'] == 2) {
+                $avatar = "./img/support.png";
+                $heading = "Ответ поддержки";
+            }
+
+            echo '
+                <tr>
+                    <td>
+                        <img src="'.$avatar.'" alt="avatar">
+                    </td>
+                    <td>
+                        <h5>'.$heading.'</h5>
+                        <p>'.$message['text'].'</p>';
+                        if(isset($message['files']))
+                        {
+                            foreach($message['files'] as $file) {
+                                echo $file['file_name'].' '.'<a href="'.$_SERVER['DOCUMENT_ROOT'].'/ticket'.$file['file_path'].'">Скачать</a>';
+                            }
+                        }
+                  echo '
+                    </td>
+                    <td>'.$message['timestamp'].'</td>
+                </tr>
+            ';
+        }
+        echo '</tbody></table>';
+    } 
+
+    private function showReply($ticket) {
+        echo '
+        <div>
+        <form>
+        
+        <input type="hidden" id="message-ticket-id-field" value="'.$ticket->ticket_id.'">
+        <input type="hidden" id="message-user-id-field" value="'.$_SESSION['user_id'].'">
+
+        <div class="form-group">
+            <textarea class="form-control" id="message-text-field" rows="3"></textarea>
+        </div>
+        <div class="form-group row mx-3">
+            <button class="btn btn-primary mr-3" id="message-submit-btn">Ответить</button>
+            <input type="file" id="message-file-field">
+        </div>
+        </form>
+        </div>
+        ';
+    }
 
     public function showTickets($tickets) {        
         $this->tickets = $tickets;

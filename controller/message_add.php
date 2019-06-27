@@ -16,12 +16,12 @@
 
     //var_dump($_POST);
 
+    $ticket->ticket_id = isset($_POST['ticket_id'])? $_POST['ticket_id']: NULL;
     $ticket->user_id = isset($_POST['user_id'])? $_POST['user_id']: NULL;
-    $ticket->type_id = isset($_POST['type_id'])? $_POST['type_id']: NULL;
-    $ticket->topic   = isset($_POST['topic'])? $_POST['topic']: NULL;
     $ticket->text = isset($_POST['text'])? $_POST['text']: NULL;
-    $ticket->link = isset($_POST['link'])? $_POST['link']: NULL;
-    $ticket->timestamp_created = time();
+    $ticket->status_id = isset($_POST['status_id'])? $_POST['status_id']: NULL;
+    $ticket->type_id = isset($_POST['type_id'])? $_POST['type_id']: NULL;
+    $ticket->timestamp = time();
 
     $uploaddir = '../uploads/';
             
@@ -52,7 +52,12 @@
         }
     }
     
-    if($ticket->addTicket()) {
+    if($ticket->status_id == 4 && $ticket->role_id == 1) {
+        $ticket->status_id = 2;
+        $ticket->updateStatusAndType();
+    } 
+
+    if($ticket->addMessage()) {
         echo json_encode(array("status"=>"success", "ticket_id"=>$ticket->ticket_id));
     };
 

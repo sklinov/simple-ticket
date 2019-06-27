@@ -64,8 +64,76 @@ $(() => {
 
     $('#container').on("click","#ticket-view-btn", (e) => {
         e.preventDefault();
-        var ticket_id = $(e.target).data("ticket-id")
-        console.log(ticket_id);
+        ticket_id = $(e.target).data("ticket-id")
+        detailsReload();
+    });
+
+    var ticket_id;
+
+    $('#container').on("click","#message-submit-btn", (e) => {
+        e.preventDefault();
+        var formData = new FormData();
+        
+        formData.append('ticket_id',$('#message-ticket-id-field').val());      
+        formData.append('status_id', $('#message-status-field').val());
+        formData.append('type_id', $('#message-type-field').val());
+        formData.append('user_id',$('#message-user-id-field').val());
+        formData.append('text', $('#message-text-field').val());
+        formData.append('file', $('#message-file-field').prop('files')[0]);
+        
+        //var file_data = $('#file-field').prop('files')[0];
+        // $.each($("#file-field").prop('files')[0], (i, file) => {
+        //  formData.append('file-'+i, file);
+        // });
+        console.log(formData);
+        $.ajax({
+        method: 'post',
+        url: './controller/message_add.php',
+        data: formData,
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: function(results) {
+            console.log(results);
+            detailsReload();
+        },
+        error: function() {
+            alert('Login error');
+        }
+        });
+    });
+
+    $('#container').on("change","#message-status-field, #message-type-field", (e) => {
+        e.preventDefault();
+        
+        $('option:selected', $(e.target)).removeAttr('selected');
+
+        var formData = new FormData();
+        
+        formData.append('ticket_id',$('#message-ticket-id-field').val());      
+        formData.append('user_id',$('#message-user-id-field').val());
+        formData.append('status_id', $('#message-status-field').val());
+        formData.append('type_id', $('#message-type-field').val());
+        
+        console.log(formData);
+        $.ajax({
+        method: 'post',
+        url: './controller/status_type_update.php',
+        data: formData,
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: function(results) {
+            console.log(results);
+            detailsReload();
+        },
+        error: function() {
+            alert('Login error');
+        }
+        });
+    });
+
+    detailsReload = () => {
         $.ajax({
             type: 'post',
             url: './controller/ticket_view.php',
@@ -79,7 +147,7 @@ $(() => {
                 alert('Load error');
             }
         });
-    });
+    }
 
     //New ticket controls
 
