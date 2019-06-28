@@ -87,7 +87,7 @@ class TicketView {
                         if(isset($message['files']))
                         {
                             foreach($message['files'] as $file) {
-                                echo $file['file_name'].' '.'<a href="'.$_SERVER['DOCUMENT_ROOT'].'/ticket'.$file['file_path'].'">Скачать</a>';
+                                echo $file['file_name'].' '.'<a href="./'.$file['file_path'].'">Скачать</a>';
                             }
                         }
                   echo '
@@ -102,20 +102,27 @@ class TicketView {
     private function showReply($ticket) {
         echo '
         <div class="container fixed-bottom">
-        <form class="needs-validation">
-        <input type="hidden" id="message-status-id-field" value="'.$ticket->status_id.'">
-        <input type="hidden" id="message-type-id-field" value="'.$ticket->type_id.'">
-        <input type="hidden" id="message-ticket-id-field" value="'.$ticket->ticket_id.'">
-        <input type="hidden" id="message-user-id-field" value="'.$_SESSION['user_id'].'">
+        <div class="row">
+            <div class="col-8">
+                <form class="needs-validation">
+                    <input type="hidden" id="message-status-id-field" value="'.$ticket->status_id.'">
+                    <input type="hidden" id="message-type-id-field" value="'.$ticket->type_id.'">
+                    <input type="hidden" id="message-ticket-id-field" value="'.$ticket->ticket_id.'">
+                    <input type="hidden" id="message-user-id-field" value="'.$_SESSION['user_id'].'">
 
-        <div class="form-group">
-            <textarea class="form-control" id="message-text-field" rows="3" required></textarea>
+                    <div class="form-group">
+                        <textarea class="form-control" id="message-text-field" rows="3" required></textarea>
+                    </div>
+                    <div class="form-group row mx-3">
+                        <button class="btn btn-primary mr-3" id="message-submit-btn">Ответить</button>
+                        <input type="file" id="message-file-field">   
+                    </div>
+                </form>
+            </div>
+            <div class="col-4">
+                <button class="btn btn-secondary mt-4 ml-auto" id="back-to-list-btn">Перейти в список тикетов</button>
+            </div>
         </div>
-        <div class="form-group row mx-3">
-            <button class="btn btn-primary mr-3" id="message-submit-btn">Ответить</button>
-            <input type="file" id="message-file-field" multiple>
-        </div>
-        </form>
         </div>
         ';
     }
@@ -272,7 +279,7 @@ class TicketView {
             if (empty($dateStr) or '0000-00-00 00:00:00'==$dateStr)
             {return '...';}
 
-            $zone   = (null===$tz)? $_SESSION['timeshift'] : $tz;
+            $zone   = (null===$tz)? intval($_SESSION['timeshift']) : $tz;
             $ts     = strtotime($dateStr) + $zone;
             $nowTs  = time() - (int)date('Z') + $zone;
 

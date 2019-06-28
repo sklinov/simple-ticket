@@ -25,7 +25,6 @@ $(() => {
             else if (results.status == "fail") {
                 alert('Неверное имя пользователя или пароль');
             }
-            console.log(results.status);
         },
         error: function() {
             alert('Login error');
@@ -79,36 +78,34 @@ $(() => {
         detailsReload();
     });
 
-    // Отправка формы нового тикета
-    // $('#container').on("submit","#new-ticket-submit-btn", (e) => {
-    //     e.preventDefault();
+    // Отправка формы нового сообщения
+    $('#container').on("click","#message-submit-btn", (e) => {
+        e.preventDefault();
 
-    //     var formData = new FormData();
+        var formData = new FormData();
         
-    //     formData.append('ticket_id',$('#message-ticket-id-field').val());      
-    //     formData.append('status_id', $('#message-status-id-field').val());
-    //     formData.append('type_id', $('#message-type-id-field').val());
-    //     formData.append('user_id',$('#message-user-id-field').val());
-    //     formData.append('text', $('#message-text-field').val());
-    //     formData.append('file', $('#message-file-field').prop('files')[0]);
+        formData.append('ticket_id',$('#message-ticket-id-field').val());      
+        formData.append('status_id', $('#message-status-id-field').val());
+        formData.append('type_id', $('#message-type-id-field').val());
+        formData.append('user_id',$('#message-user-id-field').val());
+        formData.append('text', $('#message-text-field').val());
+        formData.append('file', $('#message-file-field').prop('files')[0]);
         
-    //     console.log(formData);
-    //     $.ajax({
-    //     method: 'post',
-    //     url: './controller/message_add.php',
-    //     data: formData,
-    //     processData: false,
-    //     contentType: false,
-    //     cache: false,
-    //     success: function(results) {
-    //         console.log(results);
-    //         detailsReload();
-    //     },
-    //     error: function() {
-    //         alert('Login error');
-    //     }
-    //     });
-    // });
+        $.ajax({
+        method: 'post',
+        url: './controller/message_add.php',
+        data: formData,
+        processData: false,
+        contentType: false,
+        cache: false,
+        success: function(results) {
+            detailsReload();
+        },
+        error: function() {
+            alert('Login error');
+        }
+        });
+    });
 
     // Изменение статуса и типа тикета
     $('#container').on("change","#message-status-field, #message-type-field", (e) => {
@@ -123,7 +120,6 @@ $(() => {
         formData.append('status_id', $('#message-status-field').val());
         formData.append('type_id', $('#message-type-field').val());
         
-        console.log(formData);
         $.ajax({
         method: 'post',
         url: './controller/status_type_update.php',
@@ -132,7 +128,6 @@ $(() => {
         contentType: false,
         cache: false,
         success: function(results) {
-            console.log(results);
             detailsReload();
         },
         error: function() {
@@ -172,7 +167,6 @@ $(() => {
         formData.append('link', $('#link-field').val());
         formData.append('file', $('#file-field').prop('files')[0]);
         
-        console.log(formData);
         $.ajax({
         method: 'post',
         url: './controller/ticket_add.php',
@@ -182,13 +176,10 @@ $(() => {
         cache: false,
         success: function(results) {
             results = JSON.parse(results);
-            console.log(results.status);
-            console.log(results.ticket_id);
             if(results.status === "success")
             {
                 $('#container').html(success_message_start+results.ticket_id+success_message_end+return_button);
             }
-            console.log(results);
         },
         error: function() {
             alert('Login error');
@@ -216,18 +207,13 @@ $(() => {
         });
     });
 
-    // Кнопка "Назад к списку тикетов"
+    // Кнопка "Назад к списку тикетов и отмена"
     $('#container').on("click","#back-to-list-btn, #new-ticket-cancel-btn", (e) => {
         e.preventDefault();
         mainReload();
     });
 
-    // // Кн
-    // $('#container').on("click","#new-ticket-cancel-btn", (e) => {
-    //     e.preventDefault();
-    //     mainReload();
-    // });
-
+    
     // Управление пагитацией
 
     $('#container').on("click", "#page-prev", (e) => {
@@ -254,7 +240,6 @@ $(() => {
     // Валидация форм
 
     function validateForm() {
-        console.log("validate");
           let form = $('.needs-validation');
         $(form).click(function(e){
     
