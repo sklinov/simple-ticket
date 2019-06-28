@@ -32,7 +32,6 @@
             $_FILES['file']['type']=='image/gif') 
             {
                 $uploadfile = $uploaddir.$ticket->user_id."_".time()."__".basename($_FILES['file']['name']);
-                var_dump($uploadfile);
                 if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
                     $ticket->file_path = '/uploads/'.$ticket->user_id."_".time()."__".basename($_FILES['file']['name']);
                     $ticket->file_name = $_FILES['file']['name'];
