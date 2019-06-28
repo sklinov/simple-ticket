@@ -17,7 +17,10 @@
     $ticket->type_id = isset($_POST['type_id'])? $_POST['type_id']: NULL;
     $ticket->timestamp = time();
 
-    $uploaddir = '../uploads/';
+    $uploaddir = dirname( dirname(__FILE__)).'/uploads/';
+    
+    //$current_dir = dirname(__FILE__);
+
             
     if(isset($_FILES['file']))
     {
@@ -28,8 +31,9 @@
             $_FILES['file']['type']=='image/gif') 
             {
                 $uploadfile = $uploaddir.$ticket->user_id."_".time()."__".basename($_FILES['file']['name']);
+                var_dump($uploadfile);
                 if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
-                    $ticket->file_path = substr($uploadfile,2);
+                    $ticket->file_path = $uploadfile;
                     $ticket->file_name = $_FILES['file']['name'];
                     echo "Файл ". $_FILES['file']['name'] ." был успешно загружен.\n";
                 } 
