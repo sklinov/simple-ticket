@@ -35,12 +35,14 @@
                     'username' => $username,
                     'hash' => $hash,
                     'role_id' => $role_id,
-                    'role_name' => $role_name
+                    'role_name' => $role_name,
+                    'timeshift' => $timeshift
                 );
-                //Check password
+                //Проверка пароля
                 if(password_verify($user->password, $user_item['hash'])) {
                     $_SESSION['role_id'] = $user_item['role_id'];
                     $_SESSION['user_id'] = $user_item['user_id'];
+                    $_SESSION['timeshift'] = $user_item['timeshift'];
                     array_push($user_arr['data'],$user_item);
                 }
             }
@@ -55,13 +57,12 @@
                 );
             }
         } else {
-            // No users found
+            //Пользователь не найден
             echo json_encode(
                 array('message' => 'No users found with username entered',
                       'status' => 'fail')
             );
         }   
-        //$_SESSION['user_role'] = $user->user_logged_in;
     }
     
    

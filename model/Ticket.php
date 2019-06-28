@@ -25,6 +25,9 @@
         public $message_id;
         public $messages = [];
         
+        public $tickets_on_page = 4;
+        public $total;
+
         public $types = [];
         public $statuses = [];
 
@@ -34,18 +37,25 @@
             $this->role_id = isset($_SESSION['role_id'])?$_SESSION['role_id']:null;
         }
 
+        public function doQuery($query) {
+            try {
+                $stmt = $this->conn->prepare($query);
+                $stmt->execute();
+            }
+            catch(PDOException $e) {
+                echo 'Error:'. $e->getMessage();
+            } 
+            return $stmt;
+        }
+
         public function getTypes() {
             $query = "SELECT * from types";
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute();
-            return $stmt;
+            return $this->doQuery($query);
         }
 
         public function getStatuses() {
             $query = "SELECT * from statuses";
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute();
-            return $stmt;
+            return $this->doQuery($query);
         }
 
         public function getFullTicketById() {
@@ -77,6 +87,8 @@
                             'role_id' => $role_id,
                             'timeshift' => $timeshift,
                             'timestamp' => $timestamp,
+                            //'updated_at' =>$updated_at,
+                            //'number_of_messages' => $number_of_messages
                         );
                         $result_f = $this->getFilesByMessageId($message_id);
                         if(isset($result_f) && $result_f->rowCount() > 0)
@@ -89,20 +101,14 @@
                                     'file_path' => $file_path,
                                     'file_name' => $file_name,
                                 );
-                                //echo("----FILES----");
-                                //var_dump($file);
                                 array_push($message['files'],$file);
                             }
                         }
-                        //echo("----MESSAGE---");
-                        //var_dump($message);
                         array_push($this->messages, $message);
                     }
                 }
                 return true;
             }
-            //echo("----FULL TICKET---");
-            //var_dump ($this);
             else {
                throw new Exception('Запрос не удался, попробуйте позже');
             }
@@ -123,10 +129,7 @@
                         JOIN statuses ON statuses.status_id = tickets.status_id
                         JOIN types ON types.type_id = tickets.type_id
                         WHERE tickets.ticket_id = '".$this->ticket_id."'";
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute();
-            return $stmt;
- 
+            return $this->doQuery($query);
         }
 
         private function getTicketMessagesByTicketId() {
@@ -142,9 +145,7 @@
                       FROM messages 
                       JOIN users ON users.user_id = messages.user_id
                       WHERE messages.ticket_id = '".$this->ticket_id."'";
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute();
-            return $stmt;
+            return $this->doQuery($query);
         }
 
         private function getFilesByMessageId($current_message_id) {
@@ -155,13 +156,11 @@
                         files.message_id AS message_id
                       FROM files
                       WHERE files.message_id = '".$current_message_id."'";
-            $stmt = $this->conn->prepare($query);
-            $stmt->execute();
-            return $stmt;
+           return $this->doQuery($query);
         }
 
         public function getTicketsByUserIdAndRole() {
-           $this->calculateLimits();
+           
            if($this->role_id == 1)
            {
             $query = 
@@ -172,11 +171,15 @@
                     tickets.status_id AS status_id,
                     statuses.status_name AS status_name,
                     tickets.type_id AS type_id,
-                    types.type_name AS type_name
+                    types.type_name AS type_name,
+                    (SELECT COUNT(*) FROM tickets WHERE tickets.user_id = '".$this->user_id."') AS total,
+                    (SELECT COUNT(*) FROM messages WHERE messages.ticket_id = tickets.ticket_id) AS number_of_messages,
+                    (SELECT MAX(messages.timestamp) FROM messages WHERE messages.ticket_id = tickets.ticket_id) AS updated_at
                 FROM ".$this->table."
                 JOIN statuses ON statuses.status_id = tickets.status_id
                 JOIN types ON types.type_id = tickets.type_id
-                WHERE tickets.user_id = '".$this->user_id."'";
+                WHERE tickets.user_id = '".$this->user_id."'
+                LIMIT ".(($this->current_page-1)*$this->tickets_on_page).",".$this->tickets_on_page;
            }
            if($this->role_id == 2)
            {
@@ -188,15 +191,16 @@
                     tickets.status_id AS status_id,
                     statuses.status_name AS status_name,
                     tickets.type_id AS type_id,
-                    types.type_name AS type_name
+                    types.type_name AS type_name,
+                    (SELECT COUNT(*) FROM tickets) AS total,
+                    (SELECT COUNT(*) FROM messages WHERE messages.ticket_id = tickets.ticket_id) AS number_of_messages,
+                    (SELECT MAX(messages.timestamp) FROM messages WHERE messages.ticket_id = tickets.ticket_id) AS updated_at
                 FROM ".$this->table."
                 JOIN statuses ON statuses.status_id = tickets.status_id
-                JOIN types ON types.type_id = tickets.type_id";  
+                JOIN types ON types.type_id = tickets.type_id
+                LIMIT ".(($this->current_page-1)*$this->tickets_on_page).",".$this->tickets_on_page;  
            }
-
-           $stmt = $this->conn->prepare($query);
-           $stmt->execute();
-           return $stmt;
+           return $this->doQuery($query);
         }
 
         public function addTicket() {
@@ -336,9 +340,15 @@
             }
         }
 
-        private function calculateLimits() {
-            return true;
+        public function getStats() {
+            $query = "SELECT COUNT(*) AS count, (DATE(tickets.timestamp_created)) AS date from tickets GROUP BY DATE(tickets.timestamp_created) ORDER BY date DESC";
+            return $this->doQuery($query);
         }
-    }
 
-//    SELECT messages.timestamp AS updated_at FROM `messages` WHERE ticket_id = 1 ORDER BY messages.timestamp DESC LIMIT 1
+        public function getCurDate()
+        {
+            return date('Y-m-d H:i:s', time() - (int)date('Z'));
+        }
+
+
+    }

@@ -6,10 +6,6 @@
     include_once '../model/Ticket.php';
     include_once '../view/ticketview.php';
     
-    // header('Access-Control-Allow-Origin: *');
-    // header('Access-Control-Allow-Headers: X-Requested-With');
-    // header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-
     $database = new Database();
     $db = $database->connect();
     $ticket = new Ticket($db);
@@ -21,7 +17,7 @@
         try {
             $ticket->getFullTicketById();
 
-            // Get lists of types and statuses
+            // Получить список типов и статусов
             $result = $ticket->getTypes();
             while($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 extract($row);

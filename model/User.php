@@ -10,6 +10,7 @@
         public $role_id;
         public $role_name;
         public $user_logged_in = "false";
+        public $timeshift;
         
         public function __construct($db) {
             $this->conn = $db;
@@ -21,7 +22,8 @@
                 users.username AS username,
                 users.PASSWORD AS hash,
                 users.role_id AS role_id,
-                roles.role_name AS role_name
+                roles.role_name AS role_name,
+                users.timeshift AS timeshift
             FROM
                 `users`
             JOIN
@@ -30,9 +32,14 @@
                 roles.role_id = users.role_id
             WHERE
                 users.username ='".$this->username."'";
-
-           $stmt = $this->conn->prepare($query);
-           $stmt->execute();
-           return $stmt;
+        try {
+            $stmt = $this->conn->prepare($query);
+            $stmt->execute();
+        } catch(PDOException $e) {
+            echo 'Error:'. $e->getMessage();
+        } 
+        return $stmt;
+        
+           
         }
     }

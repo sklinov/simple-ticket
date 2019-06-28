@@ -14,14 +14,12 @@
     $db = $database->connect();
     $ticket = new Ticket($db);
 
-    //var_dump($_POST);
-
     $ticket->user_id = isset($_POST['user_id'])? $_POST['user_id']: NULL;
     $ticket->type_id = isset($_POST['type_id'])? $_POST['type_id']: NULL;
     $ticket->topic   = isset($_POST['topic'])? $_POST['topic']: NULL;
     $ticket->text = isset($_POST['text'])? $_POST['text']: NULL;
     $ticket->link = isset($_POST['link'])? $_POST['link']: NULL;
-    $ticket->timestamp_created = time();
+    $ticket->timestamp_created = $ticket->getCurDate();
 
     $uploaddir = '../uploads/';
             

@@ -1,0 +1,56 @@
+.btn {
+    border-color: black;
+    border-width: 2px;    
+    color: black;
+}
+
+.btn-primary {
+    background-color: var(--green);
+}
+.btn-primary:hover {
+    background-color: var(--teal);
+    color: black;
+}
+
+.page-link {
+    color: black;
+    border-width: 2px;
+    border-color: black;
+}
+
+.page-link:hover {
+    color: var(--teal);
+    border-width: 2px;
+    border-color: black;
+}
+
+.page-item:first-child .page-link {
+    border-radius: 20px 0 0 20px;
+}
+.page-item:last-child .page-link {
+    border-radius: 0 20px 20px 0;
+}
+
+thead > tr:first-child {
+    background-color: #cccccc;
+    opacity: 1;
+}
+
+tr:nth-child(even) {
+    background-color: var(--light);
+}
+
+.avatar {
+    width: 64px;
+    height: 64px;
+}
+
+.table-wraper{
+    max-height: 70vh;
+    overflow: auto;
+}
+
+.logotype {
+    max-width: 256px;
+    max-height: 256px;
+}
