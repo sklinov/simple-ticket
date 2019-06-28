@@ -87,7 +87,7 @@ class TicketView {
                         if(isset($message['files']))
                         {
                             foreach($message['files'] as $file) {
-                                echo $file['file_name'].' '.'<a href="./'.$file['file_path'].'">Скачать</a>';
+                                echo $file['file_name'].' '.'<a href=".'.$file['file_path'].'">Скачать</a>';
                             }
                         }
                   echo '
