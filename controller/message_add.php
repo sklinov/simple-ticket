@@ -19,9 +19,6 @@
 
     $uploaddir = dirname( dirname(__FILE__)).'/uploads/';
     
-    //$current_dir = dirname(__FILE__);
-
-            
     if(isset($_FILES['file']))
     {
         if($_FILES['file']['size']<=3145728) {
@@ -35,7 +32,7 @@
                 if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
                     $ticket->file_path = '/uploads/'.$ticket->user_id."_".time()."__".basename($_FILES['file']['name']);
                     $ticket->file_name = $_FILES['file']['name'];
-                    echo "Файл ". $_FILES['file']['name'] ." был успешно загружен.\n";
+                    //echo "Файл ". $_FILES['file']['name'] ." был успешно загружен.\n";
                 } 
                 else {
                     echo "Ошибка загрузки файла:".$_FILES['file']['error'];

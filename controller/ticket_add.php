@@ -21,8 +21,8 @@
     $ticket->link = isset($_POST['link'])? $_POST['link']: NULL;
     $ticket->timestamp_created = $ticket->getCurDate();
 
-    $uploaddir = '../uploads/';
-            
+    $uploaddir = dirname( dirname(__FILE__)).'/uploads/';
+    
     if(isset($_FILES['file']))
     {
         if($_FILES['file']['size']<=3145728) {
@@ -32,10 +32,11 @@
             $_FILES['file']['type']=='image/gif') 
             {
                 $uploadfile = $uploaddir.$ticket->user_id."_".time()."__".basename($_FILES['file']['name']);
+                var_dump($uploadfile);
                 if (move_uploaded_file($_FILES['file']['tmp_name'], $uploadfile)) {
-                    $ticket->file_path = substr($uploadfile,2);
+                    $ticket->file_path = '/uploads/'.$ticket->user_id."_".time()."__".basename($_FILES['file']['name']);
                     $ticket->file_name = $_FILES['file']['name'];
-                    echo "Файл ". $_FILES['file']['name'] ." был успешно загружен.\n";
+                    //echo "Файл ". $_FILES['file']['name'] ." был успешно загружен.\n";
                 } 
                 else {
                     echo "Ошибка загрузки файла:".$_FILES['file']['error'];
